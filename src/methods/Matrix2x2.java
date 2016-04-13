@@ -19,7 +19,7 @@ public class Matrix2x2 {
      * @param m матрица для сравнения.
      * @return true если равны, иначе false.
      */
-    public boolean equals(Matrix2x2 m) {
+    public boolean equals(final Matrix2x2 m) {
         return matrix[0][0] == m.matrix[0][0] && 
                matrix[0][1] == m.matrix[0][1] && 
                matrix[1][0] == m.matrix[1][0] && 
@@ -40,7 +40,7 @@ public class Matrix2x2 {
      * @param m матрица, на котороую умнажают
      * @return матрица произведения.
      */
-    public Matrix2x2 multiplication(Matrix2x2 m) {
+    public Matrix2x2 multiplication(final Matrix2x2 m) {
         Matrix2x2 ret = new Matrix2x2();
         ret.matrix[0][0] = matrix[0][0]*m.matrix[0][0] + matrix[0][1]*m.matrix[1][0];
         ret.matrix[0][1] = matrix[0][0]*m.matrix[1][0] + matrix[0][1]*m.matrix[1][1];
@@ -53,7 +53,7 @@ public class Matrix2x2 {
      * Умножение матрицы на число.
      * @param num числ, на которое умножается матрица.
      */
-    public void multiplication(Double num) {
+    public void multiplication(final Double num) {
         matrix[0][0] *= num;
         matrix[0][1] *= num;
         matrix[1][0] *= num;
@@ -83,7 +83,7 @@ public class Matrix2x2 {
      * @param element задаваемый элемент.
      * @throws ArrayIndexOutOfBoundsException если i или j выходят за рамки массива.
      */
-    public void setMetrixElement(Integer i, Integer j, Double element) /*throws ArrayIndexOutOfBoundsException*/{
+    public void setMatrixElement(final Integer i, final Integer j, final Double element) /*throws ArrayIndexOutOfBoundsException*/{
         //if (i >= n || j >= n) throw new ArrayIndexOutOfBoundsException();
         matrix[i][j] = element;
     }

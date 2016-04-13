@@ -14,7 +14,7 @@ public class Function {
      * Конструктор с заданием параметра а.
      * @param p параметр функции.
      */
-    public Function(Double p) {
+    public Function(final Double p) {
         parametr = p;
     }
     
@@ -39,12 +39,31 @@ public class Function {
      * @param p вектор координат.
      * @return значение функции с заданными параметрами.
      */
-    public Double getFunctionValue(Point p) {
+    public Double getFunctionValue(final Point p) {
         return Math.pow((p.getX2() + Math.pow(p.getX1(), 2)), 2) + parametr*Math.pow((p.getX1() -1), 2);
     }
     
-    public Point gradient(Point p) {
+    /**
+     * Вычисление градиента функции в точке p.
+     * @param p вектор координат.
+     * @return значение градиента. В х1 - частная производная по х1, в х2 - частная производная по х2.
+     */
+    public Point gradient(final Point p) {
         return new Point(4*p.getX1()*(Math.pow(p.getX1(), 2) - p.getX2()) - 2*parametr*(p.getX1() - 1), 
                    2*(p.getX1() - Math.pow(p.getX2(), 2)));
+    }
+    
+    /**
+     * Вычисление второго градиента в точке с координатами p. grad(grad(f)).
+     * @param p вектор координат.
+     * @return значение второго градиента.
+     */
+    public Matrix2x2 gradient2(final Point p) {
+        Matrix2x2 m = new Matrix2x2();
+        m.setMatrixElement(0, 0, 12*Math.pow(p.getX1(), 2) - 4*p.getX2());
+        m.setMatrixElement(0, 1, -4*p.getX1());
+        m.setMatrixElement(1, 0, -4*p.getX1());
+        m.setMatrixElement(1, 1, 2.0);
+        return m;
     }
 }
