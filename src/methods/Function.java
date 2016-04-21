@@ -1,13 +1,13 @@
 package methods;
 
 public class Function {
-    private Double parametr;
+    private Double parameter;
     
     /**
      * Конструктор без задания параметра. Параметр по-умолчанию равен 0.
      */
     public Function() {
-        parametr = 0.0;
+        parameter = 0.0;
     }
     
     /**
@@ -15,7 +15,7 @@ public class Function {
      * @param p параметр функции.
      */
     public Function(final Double p) {
-        parametr = p;
+        parameter = p;
     }
     
     /**
@@ -23,7 +23,7 @@ public class Function {
      * @return параметра "а".
      */
     public Double getParameter() {
-        return parametr;
+        return parameter;
     }
     
     /**
@@ -31,7 +31,7 @@ public class Function {
      * @param p параметр "а".
      */
     public void setParameter(final Double p) {
-        parametr = p;
+        parameter = p;
     }
     
     /**
@@ -40,7 +40,18 @@ public class Function {
      * @return значение функции с заданными параметрами.
      */
     public Double getFunctionValue(final Point p) {
-        return Math.pow((p.getX2() + Math.pow(p.getX1(), 2)), 2) + parametr*Math.pow((p.getX1() -1), 2);
+        return Math.pow((p.getX2() + Math.pow(p.getX1(), 2)), 2) + parameter*Math.pow((p.getX1() -1), 2);
+    }
+    
+    /**
+     *
+     * @param p точка, для которой ищется alpha.
+     * @return значение alpha для заданой точки для метода наискорейшего спуска.
+     */
+    public Double getAlpha(final Point p) {
+        Point grad = gradient(p);
+        if (0.0 == grad.getX2()) return 0.0;
+        return (p.getX1() - p.getX2()*p.getX2())/grad.getX2();
     }
     
     /**
@@ -49,7 +60,7 @@ public class Function {
      * @return значение градиента. В х1 - частная производная по х1, в х2 - частная производная по х2.
      */
     public Point gradient(final Point p) {
-        return new Point(4*p.getX1()*(Math.pow(p.getX1(), 2) - p.getX2()) - 2*parametr*(p.getX1() - 1), 
+        return new Point(4*p.getX1()*(Math.pow(p.getX1(), 2) - p.getX2()) - 2*parameter*(p.getX1() - 1), 
                    2*(p.getX1() - Math.pow(p.getX2(), 2)));
     }
     

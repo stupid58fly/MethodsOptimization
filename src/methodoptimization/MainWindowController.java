@@ -13,10 +13,13 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
+import methods.Methods;
+import methods.Point;
 
 public class MainWindowController implements Initializable {
     private File file;
     private FileChooser fileChooser;
+    private Methods methods;
     
     @FXML
     private MenuItem save;                              //Кнопка меню "Сохранить"
@@ -49,7 +52,7 @@ public class MainWindowController implements Initializable {
     @FXML
     private TableColumn colSpeed;                       //Столбец скорость сходимости
     @FXML
-    private ComboBox method;                            //Поле выбора метода оптимизации
+    private ComboBox<String> method;                    //Поле выбора метода оптимизации
     @FXML
     private TextField x11;                              //Поле ввода значения начального вектора
     @FXML
@@ -154,7 +157,73 @@ public class MainWindowController implements Initializable {
      */
     @FXML
     public void onStep() {
-        throw new UnsupportedOperationException("Not supported yet");
+        boolean doStep = true;
+        Point p = new Point();
+        int stepsAmount;
+        int stepsPrint;
+        double stepsStart;
+        
+        try {
+            p.setX1(Double.parseDouble(x11.getText()));
+        } catch (Exception e) {
+            x11.setText("");
+            doStep = false;
+        }
+        
+        try {
+            p.setX2(Double.parseDouble(x12.getText()));
+        } catch (Exception e) {
+            x12.setText("");
+            doStep = false;
+        }
+        
+        try {
+            stepsAmount = Integer.parseInt(amoStep.getText());
+            if (stepsAmount <= 0) throw new Exception();
+        } catch (Exception e) {
+            amoStep.setText("");
+            doStep = false;
+        }
+        
+        try {
+            stepsPrint = Integer.parseInt(printStep.getText());
+            if (stepsPrint <= 0) throw new Exception();
+        } catch (Exception e) {
+            printStep.setText("");
+            doStep = false;
+        }
+        
+        try {
+            stepsStart = Double.parseDouble(startStep.getText());
+            if (stepsStart <= 0) throw new Exception();
+        } catch (Exception e) {
+            startStep.setText("");
+            doStep = false;
+        }
+        
+        try {
+            methods.setParameter(Double.parseDouble(a.getText()));
+        } catch (Exception e) {
+            a.setText("");
+            doStep = false;
+        }
+        
+        try {
+            System.out.println(method.getValue());
+        } catch (Exception e) {
+            a.setText("");
+            doStep = false;
+        }
+        
+        if(doStep) {
+            throw new UnsupportedOperationException("Сделать шаг пока не поддерживается");
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Ошибка");
+            alert.setContentText("Исправьте данные и повторите попытку");
+            alert.setHeaderText("Данные введены некорректно");
+            alert.showAndWait();
+        }
     }
     
     @Override
@@ -163,6 +232,9 @@ public class MainWindowController implements Initializable {
         fileChooser.setTitle("Сохранить данные как");
         fileChooser.getExtensionFilters().add(0, new FileChooser.ExtensionFilter("Text format", "*.txt"));
         fileChooser.getExtensionFilters().add(1, new FileChooser.ExtensionFilter("All format", "*.*"));
+        
+        methods = new Methods();
+        method.getItems().addAll(methods.names());
         
         //поля, пока недоступные
         aboutMethod.setDisable(true);
