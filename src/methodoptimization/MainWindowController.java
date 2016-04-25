@@ -14,6 +14,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import methods.Methods;
+import methods.NameMethods;
 import methods.Point;
 
 public class MainWindowController implements Initializable {
@@ -52,7 +53,7 @@ public class MainWindowController implements Initializable {
     @FXML
     private TableColumn colSpeed;                       //Столбец скорость сходимости
     @FXML
-    private ComboBox<String> method;                    //Поле выбора метода оптимизации
+    private ComboBox<NameMethods> method;                    //Поле выбора метода оптимизации
     @FXML
     private TextField x11;                              //Поле ввода значения начального вектора
     @FXML
@@ -74,7 +75,7 @@ public class MainWindowController implements Initializable {
      * то вызовится метод MainWindowController.onSaveAs()
      */
     @FXML
-    public void onSave() {
+    private void onSave() {
         if (null != file) {
             throw new UnsupportedOperationException("Not supported yet");
         } else onSaveAs();
@@ -85,7 +86,7 @@ public class MainWindowController implements Initializable {
      * Если фаил не будет выбран, то сохранения не произайдет.
      */
     @FXML
-    public void onSaveAs() {
+    private void onSaveAs() {
         //Если пользователь сохранял фаил, то откроется дириктория с этим файлом
         if (null != file) fileChooser.setInitialDirectory(file.getParentFile());
         
@@ -102,7 +103,7 @@ public class MainWindowController implements Initializable {
      * В случаи отмены, выход совершён не будет.
      */
     @FXML
-    public void onExit() {
+    private void onExit() {
         throw new UnsupportedOperationException("Not supported yet");
     }
     
@@ -110,7 +111,7 @@ public class MainWindowController implements Initializable {
      * Очистка таблицы без сохранения данных.
      */
     @FXML
-    public void onClear() {
+    private void onClear() {
         throw new UnsupportedOperationException("Not supported yet");
     }
     
@@ -118,7 +119,7 @@ public class MainWindowController implements Initializable {
      * Разворачивание на полный экран окна и возврат к оконному режиму.
      */
     @FXML
-    public void onFullScreen() {
+    private void onFullScreen() {
         throw new UnsupportedOperationException("Not supported yet");
     }
     
@@ -126,7 +127,7 @@ public class MainWindowController implements Initializable {
      * Выдача диалогового окна с информацией о текущем методе оптимизации.
      */
     @FXML
-    public void onAboutMethod() {
+    private void onAboutMethod() {
         throw new UnsupportedOperationException("Not supported yet");
     }
     
@@ -134,7 +135,7 @@ public class MainWindowController implements Initializable {
      * Выдача диалогового окна с информацией о программе.
      */
     @FXML
-    public void onAboutProgram() {
+    private void onAboutProgram() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Информация о программе");
         alert.setHeaderText("Java Method Optimozation v1.0");
@@ -148,7 +149,7 @@ public class MainWindowController implements Initializable {
      * Выдача диалогового окна со справкой по программе.
      */
     @FXML
-    public void onHelp() {
+    private void onHelp() {
         throw new UnsupportedOperationException("Not supported yet");
     }
     
@@ -156,11 +157,11 @@ public class MainWindowController implements Initializable {
      * Подсчет программой по заданным условиям и выдачей результата в таблицу.
      */
     @FXML
-    public void onStep() {
+    private void onStep() {
         boolean doStep = true;
         Point p = new Point();
-        int stepsAmount;
-        int stepsPrint;
+        int stepsAmount = 0;
+        int stepsPrint = 0;
         double stepsStart;
         
         try {
@@ -196,6 +197,7 @@ public class MainWindowController implements Initializable {
         try {
             stepsStart = Double.parseDouble(startStep.getText());
             if (stepsStart <= 0) throw new Exception();
+            methods.setStep(stepsStart);
         } catch (Exception e) {
             startStep.setText("");
             doStep = false;
@@ -208,15 +210,44 @@ public class MainWindowController implements Initializable {
             doStep = false;
         }
         
-        try {
-            System.out.println(method.getValue());
-        } catch (Exception e) {
-            a.setText("");
-            doStep = false;
-        }
+        if (null == method.getValue()) doStep = false;
         
         if(doStep) {
-            throw new UnsupportedOperationException("Сделать шаг пока не поддерживается");
+            for (int i = 0; i < stepsAmount; i++) {
+                Point newPoint = null;
+                methods.setP1(p);
+                switch (method.getValue()) {
+                    case MethodBFS:
+                        newPoint = methods.methodBFS();
+                        break;
+                    case MethodDFP:
+                        newPoint = methods.methodDFP();
+                        break;
+                    case MethodNewtons:
+                        newPoint = methods.methodNewtons();
+                        break;
+                    case MethodOfRavines:
+                        newPoint = methods.methodOfRavines();
+                        break;
+                    case MethodOfSteepestDescent:
+                        newPoint = methods.methodOfSteepestDescent();
+                        break;
+                    case MethodPitchwise:
+                        newPoint = methods.methodPitchwise();
+                        break;
+                    case MethodStepCrushing:
+                        newPoint = methods.methodStepCrushing();
+                        break;
+                    case MethodToDecreaseTheLengthOfThePitch:
+                        newPoint = methods.methodToDecreaseTheLengthOfThePitch();
+                        break;
+                }
+                if (Point.minus(p, newPoint).norma() < 1e-15) break;
+                if (0 == i % stepsPrint){
+                    print();
+                }
+            }
+            print();
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Ошибка");
@@ -234,10 +265,17 @@ public class MainWindowController implements Initializable {
         fileChooser.getExtensionFilters().add(1, new FileChooser.ExtensionFilter("All format", "*.*"));
         
         methods = new Methods();
-        method.getItems().addAll(methods.names());
+        method.getItems().addAll(NameMethods.values());
         
         //поля, пока недоступные
         aboutMethod.setDisable(true);
         help.setDisable(true);
+    }
+    
+    /**
+     * Печатать на окно текущие шаги.
+     */
+    private void print() {
+        
     }
 }
