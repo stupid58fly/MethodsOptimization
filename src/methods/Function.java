@@ -49,9 +49,25 @@ public class Function {
      * @return значение alpha для заданой точки для метода наискорейшего спуска.
      */
     public Double getAlpha(final Point p) {
-        Point grad = gradient(p);
-        if (0.0 == grad.getX2()) return 0.0;
-        return (p.getX1() - p.getX2()*p.getX2())/grad.getX2();
+        Point g = gradient(p);
+        double k3 = 4*g.getX1();
+        double k2 = 6*g.getX1()*(g.getX2()-2*p.getX1()*g.getX1());
+        double k1 = 2*(Math.pow(2*p.getX1()*g.getX1() - g.getX2(), 2) + 
+                g.getX1()*g.getX1()*(2*p.getX1()*p.getX1() - 2*p.getX2() + parameter));
+        double k0 = 2*((p.getX1()*p.getX1() - p.getX2())*(g.getX2()-2*p.getX1()*g.getX1())-
+                parameter*g.getX1()*(p.getX1() - 1));
+        
+        if (k3 != 0) {
+            //вписать длинную формулу от 3 степени
+            throw new UnsupportedOperationException("Вычисление alpha_k для наискорейшего спуска производной 3-й степени не поддерживается");
+        }
+        if (k2 != 0) {
+            return (Math.sqrt(k1*k1-4*k0*k2) - k1)/(2*k2);
+        }
+        if (k1 != 0) {
+            return -k0/k1;
+        }
+        return 0.0;
     }
     
     /**

@@ -31,82 +31,14 @@ public class Methods {
     }
     
     /**
-     * Метод наискорейшего спуска.
-     * @return координаты следующей точки.
+     * Вычисляет значение функции с заданными параметрами: вектор координаты и параметр "а".
+     * @param p вектор координат.
+     * @return значение функции с заданными параметрами.
      */
-    public Point methodOfSteepestDescent() {
-        throw new UnsupportedOperationException("Метод наискорейшего спуска");
-        //return Point.minus(p, Point.multiplication(func.gradient(p), func.getAlpha(p)));
+    public double getFunctionValue(final Point p) {
+        return func.getFunctionValue(p);
     }
     
-    /**
-     * Градиентный метод с постоянным шагом.
-     * @return координаты следующей точки.
-     */
-    public Point methodPitchwise() {
-        return Point.minus(p1, Point.multiplication(func.gradient(p1), step));
-    }
-    
-    /**
-     * Градиентный метод с дроблением шага.
-     * @return координаты следующей точки.
-     */
-    public Point methodStepCrushing() {
-        Point newPoint;
-        do {
-            newPoint = Point.minus(p1, Point.multiplication(func.gradient(p1), step));
-            if(func.getFunctionValue(p1) >= func.getFunctionValue(newPoint))
-                step *= 0.5;
-            else break;
-        } while(true);   
-        return newPoint;  
-    }
-    
-    /**
-     * Градиентный метод с убыванием длины шага как 1/k.
-     * @return координаты следующей точки.
-     */
-    public Point methodToDecreaseTheLengthOfThePitch() {
-        throw new UnsupportedOperationException("Градиентный метод с убыванием длины шага как 1/k");
-        //return Point.minus(p, Point.multiplication(func.gradient(p), step));
-    }
-    
-    /**
-     * Градиентный метод оврагов.
-     * @return координаты следующей точки.
-     */
-    public Point methodOfRavines() {
-        throw new UnsupportedOperationException("Градиентный метод оврагов");
-        //return Point.minus(p, Point.multiplication(func.gradient(p), step));
-    }
-    
-    /**
-     * Метод Ньютона.
-     * @return координаты следующей точки.
-     */
-    public Point methodNewtons() {
-        throw new UnsupportedOperationException("Метод Ньютона");
-        //return Point.minus(p, Point.multiplication(func.gradient(p), step));
-    }
-    
-    /**
-     * Метод Давидона-Флетчера-Пауэла.
-     * @return координаты следующей точки.
-     */
-    public Point methodDFP() {
-        throw new UnsupportedOperationException("Метод Давидона-Флетчера-Пауэла");
-        //return Point.minus(p, Point.multiplication(func.gradient(p), step));
-    }
-    
-    /**
-     * Метод Бройдена-Флетчера-Шанно.
-     * @return координаты следующей точки.
-     */
-    public Point methodBFS() {
-        throw new UnsupportedOperationException("Метод Бройдена-Флетчера-Шанно");
-        //return Point.minus(p, Point.multiplication(func.gradient(p), step));
-    }
-
     /**
      * @return шаг градиентного метода. alpha_k
      */
@@ -147,5 +79,85 @@ public class Methods {
      */
     public void setP2(Point p2) {
         this.p2 = p2;
+    }
+    
+    /**
+     * Метод наискорейшего спуска.
+     * @return координаты следующей точки.
+     */
+    public Point methodOfSteepestDescent() {
+        //throw new UnsupportedOperationException("Метод наискорейшего спуска");
+        
+        return Point.minus(p1, Point.multiplication(func.gradient(p1), func.getAlpha(p1)));
+    }
+    
+    /**
+     * Градиентный метод с постоянным шагом.
+     * @return координаты следующей точки.
+     */
+    public Point methodPitchwise() {
+        return Point.minus(p1, Point.multiplication(func.gradient(p1), step));
+    }
+    
+    /**
+     * Градиентный метод с дроблением шага.
+     * @return координаты следующей точки.
+     */
+    public Point methodStepCrushing() {
+        Point newPoint;
+        do {
+            newPoint = Point.minus(p1, Point.multiplication(func.gradient(p1), step));
+            if(func.getFunctionValue(p1) >= func.getFunctionValue(newPoint))
+                step *= 0.5;
+            else break;
+        } while(true);   
+        return newPoint;  
+    }
+    
+    /**
+     * Градиентный метод с убыванием длины шага как 1/k.
+     * @param k номер шага.
+     * @return координаты следующей точки.
+     */
+    public Point methodToDecreaseTheLengthOfThePitch(int k) {
+        //throw new UnsupportedOperationException("Градиентный метод с убыванием длины шага как 1/k");
+        return Point.minus(p1, Point.multiplication(func.gradient(p1), step/k));
+        //return Point.minus(p, Point.multiplication(func.gradient(p), step));
+    }
+    
+    /**
+     * Градиентный метод оврагов.
+     * @return координаты следующей точки.
+     */
+    public Point methodOfRavines() {
+        throw new UnsupportedOperationException("Градиентный метод оврагов");
+        //return Point.minus(p, Point.multiplication(func.gradient(p), step));
+    }
+    
+    /**
+     * Метод Ньютона.
+     * @return координаты следующей точки.
+     */
+    public Point methodNewtons() {
+        throw new UnsupportedOperationException("Метод Ньютона");
+        //return Point.minus(p, Point.multiplication(func.gradient(p), step));
+    }
+    
+    /**
+     * Метод Давидона-Флетчера-Пауэла.
+     * @return координаты следующей точки.
+     */
+    public Point methodDFP() {
+        throw new UnsupportedOperationException("Метод Давидона-Флетчера-Пауэла");
+        //return Point.minus(p, Point.multiplication(func.gradient(p), step));
+    }
+    
+    /**
+     * Метод Бройдена-Флетчера-Шанно.
+     * @return координаты следующей точки.
+     */
+    public Point methodBFS() {
+        throw new UnsupportedOperationException("Метод Бройдена-Флетчера-Шанно");
+        //return Point.minus(p, Point.multiplication(func.gradient(p), step));
     }
 }

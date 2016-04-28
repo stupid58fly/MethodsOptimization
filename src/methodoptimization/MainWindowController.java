@@ -239,7 +239,7 @@ public class MainWindowController implements Initializable {
                         newPoint = methods.methodStepCrushing();
                         break;
                     case MethodToDecreaseTheLengthOfThePitch:
-                        newPoint = methods.methodToDecreaseTheLengthOfThePitch();
+                        newPoint = methods.methodToDecreaseTheLengthOfThePitch(1);
                         break;
                 }
                 if (Point.minus(p, newPoint).norma() < 1e-15) break;
