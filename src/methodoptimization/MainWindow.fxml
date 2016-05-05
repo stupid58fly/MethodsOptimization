@@ -38,6 +38,7 @@
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="F12" control="UP" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
+                  <CheckMenuItem fx:id="remember" mnemonicParsing="false" text="Запоминать" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Помощь">
@@ -75,12 +76,12 @@
             </ComboBox>
             <HBox GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
                <children>
-                  <TextField maxWidth="1.7976931348623157E308" promptText="Значение x11" HBox.hgrow="ALWAYS" fx:id="x11">
+                  <TextField maxWidth="1.7976931348623157E308" promptText="Значение x11" HBox.hgrow="ALWAYS" fx:id="x1">
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" />
                      </HBox.margin>
                   </TextField>
-                  <TextField maxWidth="1.7976931348623157E308" promptText="Значение x12" HBox.hgrow="ALWAYS" fx:id="x12">
+                  <TextField maxWidth="1.7976931348623157E308" promptText="Значение x12" HBox.hgrow="ALWAYS" fx:id="x2">
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" />
                      </HBox.margin>
@@ -126,8 +127,8 @@
          </BorderPane.margin>
          <columns>
             <TableColumn fx:id="colNum" editable="false" minWidth="50.0" prefWidth="100.0" sortable="false" text="№" />
-            <TableColumn fx:id="colX11" editable="false" minWidth="50.0" prefWidth="100.0" sortable="false" text="x1" />
-            <TableColumn fx:id="colX12" editable="false" minWidth="50.0" prefWidth="100.0" sortable="false" text="x2" />
+            <TableColumn fx:id="colX1" editable="false" minWidth="50.0" prefWidth="100.0" sortable="false" text="x1" />
+            <TableColumn fx:id="colX2" editable="false" minWidth="50.0" prefWidth="100.0" sortable="false" text="x2" />
             <TableColumn fx:id="colFunc" editable="false" minWidth="50.0" prefWidth="100.0" sortable="false" text="f(x1, x2)" />
             <TableColumn fx:id="colPower" editable="false" minWidth="50.0" prefWidth="100.0" sortable="false" text="Порядок" />
             <TableColumn fx:id="colSpeed" editable="false" minWidth="50.0" prefWidth="100.0" sortable="false" text="Скорость" />

@@ -40,6 +40,15 @@ public class Methods {
     }
     
     /**
+     * Вычисление градиента функции в точке p.
+     * @param p вектор координат.
+     * @return значение градиента. В х1 - частная производная по х1, в х2 - частная производная по х2.
+     */
+    public Point getGradient(final Point p) {
+        return func.gradient(p);
+    }
+    
+    /**
      * @return шаг градиентного метода. alpha_k
      */
     public double getStep() {
@@ -87,7 +96,7 @@ public class Methods {
      */
     public Point methodOfSteepestDescent() {
         //throw new UnsupportedOperationException("Метод наискорейшего спуска");
-        
+
         return Point.minus(p1, Point.multiplication(func.gradient(p1), func.getAlpha(p1)));
     }
     
@@ -96,6 +105,7 @@ public class Methods {
      * @return координаты следующей точки.
      */
     public Point methodPitchwise() {
+        Point g = func.gradient(p1);
         return Point.minus(p1, Point.multiplication(func.gradient(p1), step));
     }
     
@@ -107,7 +117,7 @@ public class Methods {
         Point newPoint;
         do {
             newPoint = Point.minus(p1, Point.multiplication(func.gradient(p1), step));
-            if(func.getFunctionValue(p1) >= func.getFunctionValue(newPoint))
+            if(func.getFunctionValue(p1) < func.getFunctionValue(newPoint))
                 step *= 0.5;
             else break;
         } while(true);   
@@ -119,7 +129,7 @@ public class Methods {
      * @param k номер шага.
      * @return координаты следующей точки.
      */
-    public Point methodToDecreaseTheLengthOfThePitch(int k) {
+    public Point methodToDecreaseTheLengthOfThePitch(long k) {
         //throw new UnsupportedOperationException("Градиентный метод с убыванием длины шага как 1/k");
         return Point.minus(p1, Point.multiplication(func.gradient(p1), step/k));
         //return Point.minus(p, Point.multiplication(func.gradient(p), step));

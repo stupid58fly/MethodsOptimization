@@ -38,8 +38,18 @@ public class Point {
      * @param p вектор для сравнения
      * @return если координаты обоих векторов попарно совпадают, то true, иначе false.
      */
-    public boolean equals(final Point p) {
-        return Objects.equals(p.x1, x1) && Objects.equals(p.x2, x2);
+    @Override
+    public boolean equals(final Object p) {
+        Point newP = (Point)p;
+        return Objects.equals(newP.x1, x1) && Objects.equals(newP.x2, x2);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 89 * hash + Objects.hashCode(this.x1);
+        hash = 89 * hash + Objects.hashCode(this.x2);
+        return hash;
     }
     
     /**

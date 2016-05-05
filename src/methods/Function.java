@@ -1,13 +1,13 @@
 package methods;
 
 public class Function {
-    private Double parameter;
+    private Double a;
     
     /**
      * Конструктор без задания параметра. Параметр по-умолчанию равен 0.
      */
     public Function() {
-        parameter = 0.0;
+        a = 0.0;
     }
     
     /**
@@ -15,7 +15,7 @@ public class Function {
      * @param p параметр функции.
      */
     public Function(final Double p) {
-        parameter = p;
+        a = p;
     }
     
     /**
@@ -23,7 +23,7 @@ public class Function {
      * @return параметра "а".
      */
     public Double getParameter() {
-        return parameter;
+        return a;
     }
     
     /**
@@ -31,7 +31,7 @@ public class Function {
      * @param p параметр "а".
      */
     public void setParameter(final Double p) {
-        parameter = p;
+        a = p;
     }
     
     /**
@@ -40,7 +40,9 @@ public class Function {
      * @return значение функции с заданными параметрами.
      */
     public Double getFunctionValue(final Point p) {
-        return Math.pow((p.getX2() + Math.pow(p.getX1(), 2)), 2) + parameter*Math.pow((p.getX1() -1), 2);
+        double x1 = p.getX1();
+        double x2 = p.getX2();
+        return Math.pow((x2 - x1*x1), 2) + a*Math.pow((x1 - 1), 2);
     }
     
     /**
@@ -49,13 +51,17 @@ public class Function {
      * @return значение alpha для заданой точки для метода наискорейшего спуска.
      */
     public Double getAlpha(final Point p) {
-        Point g = gradient(p);
-        double k3 = 4*g.getX1();
-        double k2 = 6*g.getX1()*(g.getX2()-2*p.getX1()*g.getX1());
-        double k1 = 2*(Math.pow(2*p.getX1()*g.getX1() - g.getX2(), 2) + 
-                g.getX1()*g.getX1()*(2*p.getX1()*p.getX1() - 2*p.getX2() + parameter));
-        double k0 = 2*((p.getX1()*p.getX1() - p.getX2())*(g.getX2()-2*p.getX1()*g.getX1())-
-                parameter*g.getX1()*(p.getX1() - 1));
+        double x1 = p.getX1();
+        double x2 = p.getX2();
+        Point grad = gradient(p);
+        double g1 = grad.getX1();
+        double g2 = grad.getX2();
+        
+        double k3 = 4 * g1;
+        double k2 = 6 * g1 * (g2 - 2 * x1*x1);
+        double k1 = 2 * (Math.pow(2 * x1*x1 - g2, 2) + g1*g1 * (2 * x1*x1 - 2 * x2 + a));
+        double k0 = 2*((x1*x1 - x2)*(x2 - 2 * x1*x1)-
+                a * x1 * (x1 - 1));
         
         if (k3 != 0) {
             //вписать длинную формулу от 3 степени
@@ -76,8 +82,10 @@ public class Function {
      * @return значение градиента. В х1 - частная производная по х1, в х2 - частная производная по х2.
      */
     public Point gradient(final Point p) {
-        return new Point(4*p.getX1()*(Math.pow(p.getX1(), 2) - p.getX2()) - 2*parameter*(p.getX1() - 1), 
-                   2*(p.getX1() - Math.pow(p.getX2(), 2)));
+        double x1 = p.getX1();
+        double x2 = p.getX2();
+        return new Point(4 * x1 * (x1*x1 - x2) + 2 * a * (x1 - 1), 
+                   2*(x2 - x1*x1));
     }
     
     /**
