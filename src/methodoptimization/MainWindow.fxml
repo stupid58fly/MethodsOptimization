@@ -38,6 +38,7 @@
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="F12" control="UP" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
+                  <MenuItem fx:id="eps" mnemonicParsing="false" onAction="#onEps" text="Точность" />
                   <CheckMenuItem fx:id="remember" mnemonicParsing="false" text="Запоминать" />
             </items>
           </Menu>
@@ -112,7 +113,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" />
                </GridPane.margin>
             </TextField>
-            <Button fx:id="step" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onStep" text="Шагнуть" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2">
+            <Button fx:id="step" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onStep" text="Шагнуть" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2">
                <GridPane.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" />
                </GridPane.margin>

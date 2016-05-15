@@ -12,10 +12,11 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("MainWindow.fxml"));
         Parent root = loader.load();
-        ((MainWindowController)loader.getController()).setStage(stage);
         
         Scene scene = new Scene(root);
         
+        stage.setTitle("Java Method Optimozation v1.0");
+        ((MainWindowController)loader.getController()).setStage(stage);
         stage.setScene(scene);
         stage.show();
     }

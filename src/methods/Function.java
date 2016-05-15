@@ -48,32 +48,30 @@ public class Function {
     /**
      *
      * @param p точка, для которой ищется alpha.
+     * @param grad вектор, стоящий при alpha в формуле пересчёта.
      * @return значение alpha для заданой точки для метода наискорейшего спуска.
      */
-    public Double getAlpha(final Point p) {
+    protected Double getAlpha(final Point p, final Point grad) {
         double x1 = p.getX1();
         double x2 = p.getX2();
-        Point grad = gradient(p);
         double g1 = grad.getX1();
         double g2 = grad.getX2();
         
-        double k3 = 4 * g1;
-        double k2 = 6 * g1 * (g2 - 2 * x1*x1);
-        double k1 = 2 * (Math.pow(2 * x1*x1 - g2, 2) + g1*g1 * (2 * x1*x1 - 2 * x2 + a));
-        double k0 = 2*((x1*x1 - x2)*(x2 - 2 * x1*x1)-
-                a * x1 * (x1 - 1));
+        double k3 = 4 * Math.pow(g1, 4.0);
+        double k2 = 6 * Math.pow(g1, 2.0) * (g2 - 2 * x1*g1);
+        double k1 = 2 * (Math.pow(2 * x1*g1 - g2, 2) + g1*g1 * (2 * x1*x1 - 2 * x2 + a));
+        double k0 = 2*((x1*x1 - x2)*(g2 - 2 * x1*g1)-
+                a * g1 * (x1 - 1));
+
+        double x_old;
+        double x_new = 0;
         
-        if (k3 != 0) {
-            //вписать длинную формулу от 3 степени
-            throw new UnsupportedOperationException("Вычисление alpha_k для наискорейшего спуска производной 3-й степени не поддерживается");
-        }
-        if (k2 != 0) {
-            return (Math.sqrt(k1*k1-4*k0*k2) - k1)/(2*k2);
-        }
-        if (k1 != 0) {
-            return -k0/k1;
-        }
-        return 0.0;
+        do {
+            x_old = x_new;
+            x_new = x_old - (k3*Math.pow(x_old, 3)+k2*Math.pow(x_old, 2)+k1*x_old+k0)/(3*k3*Math.pow(x_old, 2)+2*k2*x_old+k1);
+        } while (Math.abs(x_new - x_old) > 1e-15);
+                
+        return x_old;
     }
     
     /**
@@ -84,8 +82,9 @@ public class Function {
     public Point gradient(final Point p) {
         double x1 = p.getX1();
         double x2 = p.getX2();
-        return new Point(4 * x1 * (x1*x1 - x2) + 2 * a * (x1 - 1), 
+        Point ret = new Point(4 * x1 * (x1*x1 - x2) + 2 * a * (x1 - 1), 
                    2*(x2 - x1*x1));
+        return ret;
     }
     
     /**
@@ -95,10 +94,21 @@ public class Function {
      */
     public Matrix2x2 gradient2(final Point p) {
         Matrix2x2 m = new Matrix2x2();
-        m.setMatrixElement(0, 0, 12*Math.pow(p.getX1(), 2) - 4*p.getX2());
-        m.setMatrixElement(0, 1, -4*p.getX1());
-        m.setMatrixElement(1, 0, -4*p.getX1());
-        m.setMatrixElement(1, 1, 2.0);
+        double a11 = 12.0*Math.pow(p.getX1(), 2.0) - 4.0*p.getX2() + 2.0*a;
+        double a12 = -4.0*p.getX1();
+        double a22 = 2.0;
+        
+        m.setMatrixElement(0, 0, a11);
+        m.setMatrixElement(0, 1, a12);
+        m.setMatrixElement(1, 0, a12);
+        m.setMatrixElement(1, 1, a22);
         return m;
+    }
+    
+    /**
+     * @return минимум знначения фкнкции.
+     */
+    public Point getResult() {
+        return new Point(1.0, 1.0);
     }
 }

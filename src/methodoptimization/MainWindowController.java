@@ -4,22 +4,22 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import methods.Methods;
 import methods.NameMethods;
@@ -34,30 +34,34 @@ public class MainWindowController implements Initializable {
     private Alert errorFileSave;
     private Alert errorInput;
     private Alert ok;
+    private TextInputDialog epsilon;
     private long steps;
     private long constantSteps;
     
     private Point p;
+    private Point p2;
     private long amount;
     private long print;
     private double start;
     
-    @FXML
-    private MenuItem save;                              //Кнопка меню "Сохранить"
-    @FXML
-    private MenuItem saveAs;                            //Кнопка меню "Сохранить как"
-    @FXML
-    private MenuItem exit;                              //Кнопка меню "Выход"
-    @FXML
-    private MenuItem clear;                             //Кнопка меню "Очистить"
+//    @FXML
+//    private MenuItem save;                              //Кнопка меню "Сохранить"
+//    @FXML
+//    private MenuItem saveAs;                            //Кнопка меню "Сохранить как"
+//    @FXML
+//    private MenuItem exit;                              //Кнопка меню "Выход"
+//    @FXML
+//    private MenuItem clear;                             //Кнопка меню "Очистить"
     @FXML
     private MenuItem fullScreen;                        //Кнопка меню "На полный экран/Оконный режим"
+//    @FXML
+//    private MenuItem eps;
     @FXML
     private CheckMenuItem remember;
     @FXML
     private MenuItem aboutMethod;                       //Кнопка меню "О методе"
-    @FXML
-    private MenuItem aboutProgram;                      //Кнопка меню "О программе"
+//    @FXML
+//    private MenuItem aboutProgram;                      //Кнопка меню "О программе"
     @FXML
     private MenuItem help;                              //Кнопка меню "Справка"
     @FXML
@@ -88,131 +92,16 @@ public class MainWindowController implements Initializable {
     private TextField printStep;                        //Поле ввода значения количества шагов, через которые печатается результат
     @FXML
     private TextField startStep;                        //Поле ввода значения начального шага
-    @FXML
-    private Button step;                                //Кнопка, отвечающая за шаг
+//    @FXML
+//    private Button step;                                //Кнопка, отвечающая за шаг
 
     /**
      * @param stage the stage to set
      */
     public void setStage(Stage stage) {
         this.stage = stage;
-    }
-    
-    public class TableContent {
-        private long steps;
-        private double x1;
-        private double x2;
-        private double func;
-        private double power;
-        private double speed;
-        
-        public TableContent(long steps, double x1, double x2, double func, double power, double speed) {
-            this.steps = steps;
-            this.x1 = x1;
-            this.x2 = x2;
-            this.func = func;
-            this.power = power;
-            this.speed = speed;
-        }
-
-        /**
-         * @return the steps
-         */
-        public long getSteps() {
-            return steps;
-        }
-
-        /**
-         * @param steps the steps to set
-         */
-        public void setSteps(long steps) {
-            this.steps = steps;
-        }
-
-        /**
-         * @return the x1
-         */
-        public double getX1() {
-            return x1;
-        }
-
-        /**
-         * @param x1 the x1 to set
-         */
-        public void setX1(double x1) {
-            this.x1 = x1;
-        }
-
-        /**
-         * @return the x2
-         */
-        public double getX2() {
-            return x2;
-        }
-
-        /**
-         * @param x2 the x2 to set
-         */
-        public void setX2(double x2) {
-            this.x2 = x2;
-        }
-
-        /**
-         * @return the func
-         */
-        public double getFunc() {
-            return func;
-        }
-
-        /**
-         * @param func the func to set
-         */
-        public void setFunc(double func) {
-            this.func = func;
-        }
-
-        /**
-         * @return the power
-         */
-        public double getPower() {
-            return power;
-        }
-
-        /**
-         * @param power the power to set
-         */
-        public void setPower(double power) {
-            this.power = power;
-        }
-
-        /**
-         * @return the speed
-         */
-        public double getSpeed() {
-            return speed;
-        }
-
-        /**
-         * @param speed the speed to set
-         */
-        public void setSpeed(double speed) {
-            this.speed = speed;
-        }
-        
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder();
-            //NumberFormat nf = NumberFormat.getCurrencyInstance();
-            //nf.
-            sb.append(steps).append('\t');
-            sb.append(x1).append('\t');
-            sb.append(x2).append('\t');
-            sb.append(func).append('\t');
-            sb.append(power).append('\t');
-            sb.append(speed).append('\n');
-            
-            return sb.toString();
-        }
+        ok.setTitle(stage.getTitle());
+        epsilon.setTitle(stage.getTitle());
     }
     
     /**
@@ -223,11 +112,12 @@ public class MainWindowController implements Initializable {
     @FXML
     private void onSave() {
         if (null != file) {
-            try {
-                FileOutputStream fout = new FileOutputStream(file);
+            try (FileOutputStream fout = new FileOutputStream(file)) {
                 for (TableContent e : content) {
                     fout.write(e.toString().getBytes());
                 }
+                fout.flush();
+                fout.close();
             } catch (IOException ex) {
                 errorFileSave.show();
             }
@@ -257,10 +147,8 @@ public class MainWindowController implements Initializable {
      */
     @FXML
     private void onExit() {
-        //throw new UnsupportedOperationException("Not supported yet");
         content.clear();
-        stage.close();
-        
+        stage.close();  
     }
     
     /**
@@ -270,7 +158,9 @@ public class MainWindowController implements Initializable {
     private void onClear() {
         steps = 0L;
         constantSteps = 0L;
+        p2 = null;
         content.clear();
+        methods.clear();
     }
     
     /**
@@ -281,6 +171,15 @@ public class MainWindowController implements Initializable {
         if (stage.isFullScreen()) fullScreen.setText("На полный экран");
         else fullScreen.setText("Оконный режим");
         stage.setFullScreen(!stage.isFullScreen());
+    }
+    
+    @FXML
+    private void onEps() {
+        Optional<String> result = epsilon.showAndWait(); 
+        if (result.isPresent()){ 
+            TableContent.setFractionDigits(Integer.parseInt(result.get()));
+        }
+        logs.refresh();
     }
     
     /**
@@ -320,42 +219,94 @@ public class MainWindowController implements Initializable {
     private void onStep() {
         if (remember.isSelected()) remember();
         else onClear();
+        
         if(checkInput()) {
-            Point newPoint = p;
-            //if (!method.getValue().equals(NameMethods.MethodToDecreaseTheLengthOfThePitch)) constantSteps = 0;
-            for (int i = 0; methods.getGradient(p).norma() != 0 && i < amount; i++) {
-                steps++;
-                methods.setP1(newPoint);
-                switch (method.getValue()) {
-                    case MethodBFS:
-                        newPoint = methods.methodBFS();
-                        break;
-                    case MethodDFP:
-                        newPoint = methods.methodDFP();
-                        break;
-                    case MethodNewtons:
-                        newPoint = methods.methodNewtons();
-                        break;
-                    case MethodOfRavines:
-                        newPoint = methods.methodOfRavines();
-                        break;
-                    case MethodOfSteepestDescent:
-                        newPoint = methods.methodOfSteepestDescent();
-                        break;
-                    case MethodPitchwise:
-                        newPoint = methods.methodPitchwise();
-                        break;
-                    case MethodStepCrushing:
-                        newPoint = methods.methodStepCrushing();
-                        break;
-                    case MethodToDecreaseTheLengthOfThePitch:
-                        newPoint = methods.methodToDecreaseTheLengthOfThePitch(++constantSteps);
-                        break;
-                }
-                p = newPoint;
-                if (0 == i % print) print();                
+            Point oldPoint = p;
+            
+            if (0L == steps && method.getValue() != NameMethods.MethodOfRavines) print(p, p);
+            
+            switch (method.getValue()) {
+                case MethodBFS:
+                    for (int i = 0; methods.gradient(p).norma() != 0 && i < amount; i++) {
+                        ++steps;
+                        oldPoint = p;
+                        p = methods.methodBFS(p);
+                        if (0 == i % print) print(oldPoint, p);
+                    }
+                    break;
+                case MethodDFP:
+                    for (int i = 0; methods.gradient(p).norma() != 0 && i < amount; i++) {
+                        ++steps;
+                        oldPoint = p;
+                        p = methods.methodDFP(p);
+                        if (0 == i % print) print(oldPoint, p);
+                    }
+                    break;
+                case MethodNewtons:
+                    for (int i = 0; methods.gradient(p).norma() != 0 && i < amount; i++) {
+                        ++steps;
+                        oldPoint = p;
+                        p = methods.methodNewtons(p);
+                        if (0 == i % print) print(oldPoint, p);
+                    }
+                    break;
+                case MethodOfRavines:
+                    if (!remember.isSelected() || null == p2) {
+                        p2 = new Point(p);
+                        p2.setX1(methods.getResult().getX1()-p2.getX1());
+ 
+                        p = methods.methodOfSteepestDescent(p);
+                        p2 = methods.methodOfSteepestDescent(p2);
+                        
+                        --steps;
+                        print(p2, p2);
+                        ++steps;
+                        print(p, p);
+                    }
+
+                    for (int i = 0; methods.gradient(p).norma() >= 1e-7 && i < amount; i++) {
+                        ++steps;
+                        oldPoint = p;
+                        p = methods.methodOfRavines(p, p2);
+                        p2 = oldPoint;
+                        
+                        if (0 == i % print) print(oldPoint, p);
+                    }
+                    break;
+                case MethodOfSteepestDescent:
+                    for (int i = 0; methods.gradient(p).norma() != 0 && i < amount; i++) {
+                        ++steps;
+                        oldPoint = p;
+                        p = methods.methodOfSteepestDescent(p);
+                        if (0 == i % print) print(oldPoint, p);
+                    }
+                    break;
+                case MethodPitchwise:
+                    for (int i = 0; methods.gradient(p).norma() != 0 && i < amount; i++) {
+                        ++steps;
+                        oldPoint = p;
+                        p = methods.methodPitchwise(p);
+                        if (0 == i % print) print(oldPoint, p);
+                    }
+                    break;
+                case MethodStepCrushing:
+                    for (int i = 0; methods.gradient(p).norma() != 0 && i < amount; i++) {
+                        ++steps;
+                        oldPoint = p;
+                        p = methods.methodStepCrushing(p);
+                        if (0 == i % print) print(oldPoint, p);
+                    }
+                    break;
+                case MethodToDecreaseTheLengthOfThePitch:
+                    for (int i = 0; methods.gradient(p).norma() != 0 && i < amount; i++) {
+                        ++steps;
+                        oldPoint = p;
+                        p = methods.methodToDecreaseTheLengthOfThePitch(p, ++constantSteps);
+                        if (0 == i % print) print(oldPoint, p);
+                    }
+                    break;
             }
-            if ((amount - 1) % print != 0) print();
+            if ((amount - 1) % print != 0) print(oldPoint, p);
             ok.show();
         } else {
             errorInput.show();
@@ -397,9 +348,12 @@ public class MainWindowController implements Initializable {
         errorFileSave.setHeaderText("Что-то пошло не так");
         
         ok = new Alert(Alert.AlertType.INFORMATION);
-        ok.initModality(Modality.APPLICATION_MODAL);
         ok.setHeaderText("Подсчёт завершен");
         ok.setContentText("Подсчёт был успешно завершён. Информация приведена в таблицу.");
+        
+        epsilon = new TextInputDialog(TableContent.getFractionDigits().toString());
+        epsilon.setHeaderText("Задание точности вывода");
+        epsilon.setContentText("Введите количество знаков после запятой");
         
         //поля, пока недоступные
         aboutMethod.setDisable(true);
@@ -409,14 +363,18 @@ public class MainWindowController implements Initializable {
     /**
      * Печатать на окно текущие шаги.
      */
-    private void print() {
+    private void print(final Point pk, final Point pk1) {
         //заполнить 6-ю полями
-        double power = 0;
-        double speed = 0;
+        Point res = methods.getResult();
+        double resF = methods.getFunctionValue(res);
+        //if (steps != 0) {
+            double power = Math.log(Point.minus(pk1, res).norma())/Math.log(Point.minus(pk, res).norma());
+            double speed = (methods.getFunctionValue(pk1) - resF)/(methods.getFunctionValue(pk) - resF);
+        //}
         TableContent element = new TableContent(steps,
-                                                methods.getP1().getX1(),
-                                                methods.getP1().getX2(),
-                                                methods.getFunctionValue(methods.getP1()),
+                                                pk1.getX1(),
+                                                pk1.getX2(),
+                                                methods.getFunctionValue(pk1),
                                                 power, speed);
         content.add(element);
     }
