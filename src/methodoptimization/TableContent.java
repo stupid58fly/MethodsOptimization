@@ -13,12 +13,12 @@ import java.text.NumberFormat;
  * @author ilyab
  */
 public class TableContent {
-        private long steps;
-        private double x1;
-        private double x2;
-        private double func;
-        private double power;
-        private double speed;
+        private Long steps;
+        private Double x1;
+        private Double x2;
+        private Double func;
+        private Double power;
+        private Double speed;
         private static NumberFormat fd;
         private static NumberFormat fl;
         
@@ -59,7 +59,8 @@ public class TableContent {
          * @return the x1
          */
         public String getX1() {
-            return fd.format(x1);
+            if (x1.isNaN()) return x1.toString();
+            else return fd.format(x1);
         }
 
         /**
@@ -73,7 +74,8 @@ public class TableContent {
          * @return the x2
          */
         public String getX2() {
-            return fd.format(x2);
+            if (x2.isNaN()) return x2.toString();
+            else return fd.format(x2);
         }
 
         /**
@@ -87,7 +89,8 @@ public class TableContent {
          * @return the func
          */
         public String getFunc() {
-            return fd.format(func);
+            if (func.isNaN()) return func.toString();
+            else return fd.format(func);
         }
 
         /**
@@ -101,7 +104,8 @@ public class TableContent {
          * @return the power
          */
         public String getPower() {
-            return fd.format(power);
+            if (power.isNaN()) return power.toString();
+            else return fd.format(power);
         }
 
         /**
@@ -115,7 +119,8 @@ public class TableContent {
          * @return the speed
          */
         public String getSpeed() {
-            return fd.format(speed);
+            if (speed.isNaN()) return speed.toString();
+            else return fd.format(speed);
         }
 
         /**

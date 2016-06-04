@@ -39,7 +39,7 @@
                         <KeyCodeCombination alt="UP" code="F12" control="UP" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
                   <MenuItem fx:id="eps" mnemonicParsing="false" onAction="#onEps" text="Точность" />
-                  <CheckMenuItem fx:id="remember" mnemonicParsing="false" text="Запоминать" />
+                  <CheckMenuItem fx:id="remember" mnemonicParsing="false" onAction="#onRemember" text="Запоминать" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Помощь">

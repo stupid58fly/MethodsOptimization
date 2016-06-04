@@ -1,28 +1,13 @@
 package methods;
 
 public class Function {
-    private Double a;
-    
-    /**
-     * Конструктор без задания параметра. Параметр по-умолчанию равен 0.
-     */
-    public Function() {
-        a = 0.0;
-    }
-    
-    /**
-     * Конструктор с заданием параметра а.
-     * @param p параметр функции.
-     */
-    public Function(final Double p) {
-        a = p;
-    }
+    private static Double a;
     
     /**
      * Возвращение параметра функции.
      * @return параметра "а".
      */
-    public Double getParameter() {
+    public static Double getParameter() {
         return a;
     }
     
@@ -30,7 +15,7 @@ public class Function {
      * Задание параметра функции.
      * @param p параметр "а".
      */
-    public void setParameter(final Double p) {
+    public static void setParameter(final Double p) {
         a = p;
     }
     
@@ -39,7 +24,7 @@ public class Function {
      * @param p вектор координат.
      * @return значение функции с заданными параметрами.
      */
-    public Double getFunctionValue(final Point p) {
+    public static Double getFunctionValue(final Point p) {
         double x1 = p.getX1();
         double x2 = p.getX2();
         return Math.pow((x2 - x1*x1), 2) + a*Math.pow((x1 - 1), 2);
@@ -51,27 +36,81 @@ public class Function {
      * @param grad вектор, стоящий при alpha в формуле пересчёта.
      * @return значение alpha для заданой точки для метода наискорейшего спуска.
      */
-    protected Double getAlpha(final Point p, final Point grad) {
+    public static double getAlpha(final Point p, final Point grad) {
         double x1 = p.getX1();
         double x2 = p.getX2();
         double g1 = grad.getX1();
         double g2 = grad.getX2();
         
-        double k3 = 4 * Math.pow(g1, 4.0);
-        double k2 = 6 * Math.pow(g1, 2.0) * (g2 - 2 * x1*g1);
-        double k1 = 2 * (Math.pow(2 * x1*g1 - g2, 2) + g1*g1 * (2 * x1*x1 - 2 * x2 + a));
-        double k0 = 2*((x1*x1 - x2)*(g2 - 2 * x1*g1)-
+        double []pol = new double[4];
+        pol[0] = 4 * Math.pow(g1, 4.0);
+        pol[1] = 6 * Math.pow(g1, 2.0) * (g2 - 2 * x1*g1);
+        pol[2] = 2 * (Math.pow(2 * x1*g1 - g2, 2) + g1*g1 * (2 * x1*x1 - 2 * x2 + a));
+        pol[3] = 2*((x1*x1 - x2)*(g2 - 2 * x1*g1)-
                 a * g1 * (x1 - 1));
-
+        double max_pol_k = pol[0];
+        for (int i = 1; i < pol.length; i++)
+            if (max_pol_k < pol[i]) max_pol_k = pol[i];
+        
+        if (max_pol_k != 0) {
+            for (int i = 0; i < pol.length; i++)
+                pol[i] /= max_pol_k;
+        }
+        
+        double x = 0;
         double x_old;
-        double x_new = 0;
+        double pow_x = 1;
         
         do {
-            x_old = x_new;
-            x_new = x_old - (k3*Math.pow(x_old, 3)+k2*Math.pow(x_old, 2)+k1*x_old+k0)/(3*k3*Math.pow(x_old, 2)+2*k2*x_old+k1);
-        } while (Math.abs(x_new - x_old) > 1e-15);
-                
-        return x_old;
+            x_old = x;
+            double f = pol[0]*Math.pow(x, 3) + pol[1]*Math.pow(x, 2) + pol[2]*x + pol[3];
+            double df = 3*pol[0]*Math.pow(x, 2) + 2*pol[1]*x + pol[2];
+            if (df != 0) {
+                x -= f/df;
+            } else {
+                x += x_old;
+                continue;
+            }
+            pow_x = 1;
+            double tmp = Math.min(Math.abs(x), Math.abs(x_old));
+            
+            while(tmp > pow_x) pow_x *= 10;
+            while(tmp < pow_x) pow_x /= 10;
+        } while(Math.abs(x - x_old) > pow_x*1e-14);
+//        System.out.println("1: " + x);
+        
+        double n_pol[] = new double[3];
+        
+        n_pol[0] = pol[0];
+        for (int i = 1; i < 3; i++) {
+            n_pol[i] = x*n_pol[i-1] + pol[i];
+        }
+        
+        double D = Math.pow(n_pol[1], 2) - 4*n_pol[0]*n_pol[2];
+        
+        if (D <= 0) return x;
+        
+        double x_ = (-n_pol[1] + Math.sqrt(D))/(2*n_pol[0]);
+//        System.out.println("2: " + x_);
+        
+        Point px = new Point(Point.minus(p, Point.multiplication(grad, x)));
+        Point px_ = new Point(Point.minus(p, Point.multiplication(grad, x_)));
+        if (getFunctionValue(px) > getFunctionValue(px_)) {
+            px = px_;
+            x = x_;
+        }
+        
+        x_ = (-n_pol[1] - Math.sqrt(D))/(2*n_pol[0]);
+//        System.out.println("3: " + x_);
+        
+        px_ = new Point(Point.minus(p, Point.multiplication(grad, x_)));
+        if (getFunctionValue(px) > getFunctionValue(px_)) {
+            x = x_;
+        }
+        
+//        System.out.println("r: " + x);
+        System.out.println();
+        return x;
     }
     
     /**
@@ -79,7 +118,7 @@ public class Function {
      * @param p вектор координат.
      * @return значение градиента. В х1 - частная производная по х1, в х2 - частная производная по х2.
      */
-    public Point gradient(final Point p) {
+    public static Point gradient(final Point p) {
         double x1 = p.getX1();
         double x2 = p.getX2();
         Point ret = new Point(4 * x1 * (x1*x1 - x2) + 2 * a * (x1 - 1), 
@@ -92,7 +131,7 @@ public class Function {
      * @param p вектор координат.
      * @return значение второго градиента.
      */
-    public Matrix2x2 gradient2(final Point p) {
+    public static Matrix2x2 gradient2(final Point p) {
         Matrix2x2 m = new Matrix2x2();
         double a11 = 12.0*Math.pow(p.getX1(), 2.0) - 4.0*p.getX2() + 2.0*a;
         double a12 = -4.0*p.getX1();
@@ -108,7 +147,7 @@ public class Function {
     /**
      * @return минимум знначения фкнкции.
      */
-    public Point getResult() {
+    public static Point getResult() {
         return new Point(1.0, 1.0);
     }
 }

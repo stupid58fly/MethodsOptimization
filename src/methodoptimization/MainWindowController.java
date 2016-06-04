@@ -21,7 +21,7 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import methods.Methods;
+import methods.Function;
 import methods.NameMethods;
 import methods.Point;
 
@@ -30,38 +30,23 @@ public class MainWindowController implements Initializable {
     private File file;
     private FileChooser fileChooser;
     private ObservableList<TableContent> content;
-    private Methods methods;
     private Alert errorFileSave;
     private Alert errorInput;
     private Alert ok;
     private TextInputDialog epsilon;
     private long steps;
-    private long constantSteps;
     
-    private Point p;
-    private Point p2;
+    private Point p1;                                   //начальная точка
     private long amount;
     private long print;
     private double start;
     
-//    @FXML
-//    private MenuItem save;                              //Кнопка меню "Сохранить"
-//    @FXML
-//    private MenuItem saveAs;                            //Кнопка меню "Сохранить как"
-//    @FXML
-//    private MenuItem exit;                              //Кнопка меню "Выход"
-//    @FXML
-//    private MenuItem clear;                             //Кнопка меню "Очистить"
     @FXML
     private MenuItem fullScreen;                        //Кнопка меню "На полный экран/Оконный режим"
-//    @FXML
-//    private MenuItem eps;
     @FXML
     private CheckMenuItem remember;
     @FXML
     private MenuItem aboutMethod;                       //Кнопка меню "О методе"
-//    @FXML
-//    private MenuItem aboutProgram;                      //Кнопка меню "О программе"
     @FXML
     private MenuItem help;                              //Кнопка меню "Справка"
     @FXML
@@ -92,8 +77,6 @@ public class MainWindowController implements Initializable {
     private TextField printStep;                        //Поле ввода значения количества шагов, через которые печатается результат
     @FXML
     private TextField startStep;                        //Поле ввода значения начального шага
-//    @FXML
-//    private Button step;                                //Кнопка, отвечающая за шаг
 
     /**
      * @param stage the stage to set
@@ -157,10 +140,8 @@ public class MainWindowController implements Initializable {
     @FXML
     private void onClear() {
         steps = 0L;
-        constantSteps = 0L;
-        p2 = null;
         content.clear();
-        methods.clear();
+        NameMethods.clear();
     }
     
     /**
@@ -180,6 +161,11 @@ public class MainWindowController implements Initializable {
             TableContent.setFractionDigits(Integer.parseInt(result.get()));
         }
         logs.refresh();
+    }
+    
+    @FXML
+    private void onRemember() {
+        if (remember.isSelected()) remember();
     }
     
     /**
@@ -221,92 +207,26 @@ public class MainWindowController implements Initializable {
         else onClear();
         
         if(checkInput()) {
-            Point oldPoint = p;
-            
-            if (0L == steps && method.getValue() != NameMethods.MethodOfRavines) print(p, p);
-            
-            switch (method.getValue()) {
-                case MethodBFS:
-                    for (int i = 0; methods.gradient(p).norma() != 0 && i < amount; i++) {
-                        ++steps;
-                        oldPoint = p;
-                        p = methods.methodBFS(p);
-                        if (0 == i % print) print(oldPoint, p);
-                    }
-                    break;
-                case MethodDFP:
-                    for (int i = 0; methods.gradient(p).norma() != 0 && i < amount; i++) {
-                        ++steps;
-                        oldPoint = p;
-                        p = methods.methodDFP(p);
-                        if (0 == i % print) print(oldPoint, p);
-                    }
-                    break;
-                case MethodNewtons:
-                    for (int i = 0; methods.gradient(p).norma() != 0 && i < amount; i++) {
-                        ++steps;
-                        oldPoint = p;
-                        p = methods.methodNewtons(p);
-                        if (0 == i % print) print(oldPoint, p);
-                    }
-                    break;
-                case MethodOfRavines:
-                    if (!remember.isSelected() || null == p2) {
-                        p2 = new Point(p);
-                        p2.setX1(methods.getResult().getX1()-p2.getX1());
- 
-                        p = methods.methodOfSteepestDescent(p);
-                        p2 = methods.methodOfSteepestDescent(p2);
-                        
-                        --steps;
-                        print(p2, p2);
-                        ++steps;
-                        print(p, p);
-                    }
-
-                    for (int i = 0; methods.gradient(p).norma() >= 1e-7 && i < amount; i++) {
-                        ++steps;
-                        oldPoint = p;
-                        p = methods.methodOfRavines(p, p2);
-                        p2 = oldPoint;
-                        
-                        if (0 == i % print) print(oldPoint, p);
-                    }
-                    break;
-                case MethodOfSteepestDescent:
-                    for (int i = 0; methods.gradient(p).norma() != 0 && i < amount; i++) {
-                        ++steps;
-                        oldPoint = p;
-                        p = methods.methodOfSteepestDescent(p);
-                        if (0 == i % print) print(oldPoint, p);
-                    }
-                    break;
-                case MethodPitchwise:
-                    for (int i = 0; methods.gradient(p).norma() != 0 && i < amount; i++) {
-                        ++steps;
-                        oldPoint = p;
-                        p = methods.methodPitchwise(p);
-                        if (0 == i % print) print(oldPoint, p);
-                    }
-                    break;
-                case MethodStepCrushing:
-                    for (int i = 0; methods.gradient(p).norma() != 0 && i < amount; i++) {
-                        ++steps;
-                        oldPoint = p;
-                        p = methods.methodStepCrushing(p);
-                        if (0 == i % print) print(oldPoint, p);
-                    }
-                    break;
-                case MethodToDecreaseTheLengthOfThePitch:
-                    for (int i = 0; methods.gradient(p).norma() != 0 && i < amount; i++) {
-                        ++steps;
-                        oldPoint = p;
-                        p = methods.methodToDecreaseTheLengthOfThePitch(p, ++constantSteps);
-                        if (0 == i % print) print(oldPoint, p);
-                    }
-                    break;
+            if (steps == 0L) {
+                print(p1, p1);
             }
-            if ((amount - 1) % print != 0) print(oldPoint, p);
+            
+            Point oldPoint = p1;
+            NameMethods.p1 = p1;
+            NameMethods m = method.getValue();
+            int i;
+            for (i = 0; i < amount && Function.gradient(p1).norma() >= 1e-15; i++) {
+                if (p1.getX1().isNaN() || p1.getX1().isInfinite()) break;
+                if (p1.getX2().isNaN() || p1.getX2().isInfinite()) break;
+                
+                ++steps;
+                m.step();
+                oldPoint = p1;
+                p1 = NameMethods.p1;
+                if (i % print == 0) print(oldPoint, p1);
+            }
+            
+            if (i % print != 0) print(oldPoint, p1);
             ok.show();
         } else {
             errorInput.show();
@@ -320,13 +240,10 @@ public class MainWindowController implements Initializable {
         fileChooser.getExtensionFilters().add(0, new FileChooser.ExtensionFilter("Text format", "*.txt"));
         fileChooser.getExtensionFilters().add(1, new FileChooser.ExtensionFilter("All format", "*.*"));
         
-        methods = new Methods();
         method.getItems().addAll(NameMethods.values());
         method.setValue(NameMethods.MethodOfSteepestDescent);
         
-        steps = 0L;
-        constantSteps = 0L;
-        p = new Point();
+        p1 = new Point();
         
         colNum.setCellValueFactory(new PropertyValueFactory<>("steps"));
         colX1.setCellValueFactory(new PropertyValueFactory<>("x1"));
@@ -365,26 +282,32 @@ public class MainWindowController implements Initializable {
      */
     private void print(final Point pk, final Point pk1) {
         //заполнить 6-ю полями
-        Point res = methods.getResult();
-        double resF = methods.getFunctionValue(res);
-        //if (steps != 0) {
-            double power = Math.log(Point.minus(pk1, res).norma())/Math.log(Point.minus(pk, res).norma());
-            double speed = (methods.getFunctionValue(pk1) - resF)/(methods.getFunctionValue(pk) - resF);
-        //}
+        Point res = Function.getResult();
+        Double resF = Function.getFunctionValue(res);
+        Double power;
+        Double speed;
+        if (pk.equals(pk1)) {
+            power = Double.NaN;
+            speed = Double.NaN;
+        } else {
+            power = Math.log(Point.minus(pk1, res).norma())/Math.log(Point.minus(pk, res).norma());
+            speed = (Function.getFunctionValue(pk1) - resF)/(Function.getFunctionValue(pk) - resF);
+        }
         TableContent element = new TableContent(steps,
                                                 pk1.getX1(),
                                                 pk1.getX2(),
-                                                methods.getFunctionValue(pk1),
+                                                Function.getFunctionValue(pk1),
                                                 power, speed);
         content.add(element);
+        logs.refresh();
     }
     
     /**
      *  Запоминает точки, после последнего шага
      */
     private void remember() {
-        x1.setText(p.getX1().toString());
-        x2.setText(p.getX2().toString());
+        x1.setText(p1.getX1().toString());
+        x2.setText(p1.getX2().toString());
     }
     
     /**
@@ -393,14 +316,14 @@ public class MainWindowController implements Initializable {
     private boolean checkInput() {
         boolean result = true;
         try {
-            p.setX1(Double.parseDouble(x1.getText()));
+            p1.setX1(Double.parseDouble(x1.getText()));
         } catch (Throwable e) {
             x1.setText("");
             result = false;
         }
         
         try {
-            p.setX2(Double.parseDouble(x2.getText()));
+            p1.setX2(Double.parseDouble(x2.getText()));
         } catch (Throwable e) {
             x2.setText("");
             result = false;
@@ -409,7 +332,7 @@ public class MainWindowController implements Initializable {
         try {
             amount = Integer.parseInt(amoStep.getText());
             if (amount <= 0) throw new IOException();
-        } catch (Throwable e) {
+        } catch (NumberFormatException | IOException e) {
             amoStep.setText("");
             result = false;
         }
@@ -417,7 +340,7 @@ public class MainWindowController implements Initializable {
         try {
             print = Integer.parseInt(printStep.getText());
             if (print <= 0) throw new IOException();
-        } catch (Throwable e) {
+        } catch (NumberFormatException | IOException e) {
             printStep.setText("");
             result = false;
         }
@@ -425,15 +348,15 @@ public class MainWindowController implements Initializable {
         try {
             start = Double.parseDouble(startStep.getText());
             if (start <= 0) throw new IOException();
-            methods.setStep(start);
-        } catch (Throwable e) {
+            NameMethods.step = start;
+        } catch (NumberFormatException | IOException e) {
             startStep.setText("");
             result = false;
         }
         
         try {
             Double.parseDouble(a.getText());
-            methods.setParameter(Double.parseDouble(a.getText()));
+            Function.setParameter(Double.parseDouble(a.getText()));
         } catch (Throwable e) {
             a.setText("");
             result = false;
