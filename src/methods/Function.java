@@ -1,5 +1,8 @@
 package methods;
 
+import utils.Matrix2x2;
+import utils.Point;
+
 public class Function {
     private static Double a;
     
@@ -77,7 +80,6 @@ public class Function {
             while(tmp > pow_x) pow_x *= 10;
             while(tmp < pow_x) pow_x /= 10;
         } while(Math.abs(x - x_old) > pow_x*1e-14);
-//        System.out.println("1: " + x);
         
         double n_pol[] = new double[3];
         
@@ -91,7 +93,6 @@ public class Function {
         if (D <= 0) return x;
         
         double x_ = (-n_pol[1] + Math.sqrt(D))/(2*n_pol[0]);
-//        System.out.println("2: " + x_);
         
         Point px = new Point(Point.minus(p, Point.multiplication(grad, x)));
         Point px_ = new Point(Point.minus(p, Point.multiplication(grad, x_)));
@@ -101,14 +102,12 @@ public class Function {
         }
         
         x_ = (-n_pol[1] - Math.sqrt(D))/(2*n_pol[0]);
-//        System.out.println("3: " + x_);
         
         px_ = new Point(Point.minus(p, Point.multiplication(grad, x_)));
         if (getFunctionValue(px) > getFunctionValue(px_)) {
             x = x_;
         }
         
-//        System.out.println("r: " + x);
         System.out.println();
         return x;
     }

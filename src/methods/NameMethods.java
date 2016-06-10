@@ -5,6 +5,9 @@
  */
 package methods;
 
+import utils.Matrix2x2;
+import utils.Point;
+
 /**
  *
  * @author ilyab
@@ -89,35 +92,7 @@ public enum NameMethods implements Method{
             
             @Override
             public void step() {
-                if (p2 == null) {
-                    Point tmp = new Point(p1);
-                    MethodOfSteepestDescent.step();
-                    p2 = p1;
-                    p1 = tmp;
-                    p1.setX1(p1.getX1() - 1);
-                    p1.setX2(p1.getX2() + 1);
-                    MethodOfSteepestDescent.step();
-                }
-                
-                double f1 = Function.getFunctionValue(p1);
-                double f2 = Function.getFunctionValue(p2);
-                
-                if (f1 > f2) {
-                    Point tmp = p1;
-                    p1 = p2;
-                    p2 = tmp;
-                }
-                
-                Point ret;
-                ret = Point.minus(p1, p2);
-                ret.multiplication(step/ret.norma());
-                
-                p2 = new Point(p1);
-              
-                p1.plus(ret);
-                MethodOfSteepestDescent.step();
-                
-                //throw new UnsupportedOperationException("Метод оврагов");
+                throw new UnsupportedOperationException("Метод оврагов");
             }
         },
         MethodNewtons {

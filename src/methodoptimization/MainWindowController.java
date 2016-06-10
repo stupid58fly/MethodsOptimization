@@ -4,36 +4,29 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import methods.Function;
 import methods.NameMethods;
-import methods.Point;
+import utils.Point;
 
 public class MainWindowController implements Initializable {
     private Stage stage;
     private File file;
     private FileChooser fileChooser;
     private ObservableList<TableContent> content;
-    private Alert errorFileSave;
-    private Alert errorInput;
-    private Alert ok;
-    private TextInputDialog epsilon;
     private long steps;
     
     private Point p1;                                   //начальная точка
@@ -83,8 +76,6 @@ public class MainWindowController implements Initializable {
      */
     public void setStage(Stage stage) {
         this.stage = stage;
-        ok.setTitle(stage.getTitle());
-        epsilon.setTitle(stage.getTitle());
     }
     
     /**
@@ -102,7 +93,7 @@ public class MainWindowController implements Initializable {
                 fout.flush();
                 fout.close();
             } catch (IOException ex) {
-                errorFileSave.show();
+                DialogSingleton.showErrorFileSaveDialog();
             }
         } else onSaveAs();
     }
@@ -156,10 +147,9 @@ public class MainWindowController implements Initializable {
     
     @FXML
     private void onEps() {
-        Optional<String> result = epsilon.showAndWait(); 
-        if (result.isPresent()){ 
-            TableContent.setFractionDigits(Integer.parseInt(result.get()));
-        }
+        int accuracy = TableContent.getFractionDigits();
+        accuracy = DialogSingleton.showInputEpsilonDialog(accuracy);
+        TableContent.setFractionDigits(accuracy);
         logs.refresh();
     }
     
@@ -181,13 +171,7 @@ public class MainWindowController implements Initializable {
      */
     @FXML
     private void onAboutProgram() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Информация о программе");
-        alert.setHeaderText("Java Method Optimozation v1.0");
-        alert.setContentText("Программа разработана для учебных целей.\n"
-                + "Программа не предназначена для коммерческого использования.\n"
-                + "Если вы обнаружили баги, свяжитесь по e-mail: ilyabakaev@mail.ru");
-        alert.showAndWait();
+        DialogSingleton.showAboutProgramDialog();
     }
     
     /**
@@ -227,9 +211,9 @@ public class MainWindowController implements Initializable {
             }
             
             if (i % print != 0) print(oldPoint, p1);
-            ok.show();
+            DialogSingleton.showCalculationIsOverDialog();
         } else {
-            errorInput.show();
+            DialogSingleton.showErrorInputDialog();
         }
     }
     
@@ -253,25 +237,7 @@ public class MainWindowController implements Initializable {
         colSpeed.setCellValueFactory(new PropertyValueFactory<>("speed"));
         content = FXCollections.observableArrayList();
         logs.setItems(content);
-        
-        errorInput = new Alert(Alert.AlertType.ERROR);
-        errorInput.setTitle("Ошибка");
-        errorInput.setContentText("Исправьте данные и повторите попытку");
-        errorInput.setHeaderText("Данные введены некорректно");
-        
-        errorFileSave = new Alert(Alert.AlertType.ERROR);
-        errorFileSave.setTitle("Ошибка");
-        errorFileSave.setContentText("Данные не были записаны в фаил");
-        errorFileSave.setHeaderText("Что-то пошло не так");
-        
-        ok = new Alert(Alert.AlertType.INFORMATION);
-        ok.setHeaderText("Подсчёт завершен");
-        ok.setContentText("Подсчёт был успешно завершён. Информация приведена в таблицу.");
-        
-        epsilon = new TextInputDialog(TableContent.getFractionDigits().toString());
-        epsilon.setHeaderText("Задание точности вывода");
-        epsilon.setContentText("Введите количество знаков после запятой");
-        
+
         //поля, пока недоступные
         aboutMethod.setDisable(true);
         help.setDisable(true);

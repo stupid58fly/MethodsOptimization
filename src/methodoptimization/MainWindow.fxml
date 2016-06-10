@@ -74,18 +74,27 @@
                <GridPane.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" />
                </GridPane.margin>
+               <tooltip>
+                  <Tooltip text="Выбор метода оптимизации" />
+               </tooltip>
             </ComboBox>
             <HBox GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
                <children>
-                  <TextField maxWidth="1.7976931348623157E308" promptText="Значение x11" HBox.hgrow="ALWAYS" fx:id="x1">
+                  <TextField maxWidth="1.7976931348623157E308" promptText="Значение x1" HBox.hgrow="ALWAYS" fx:id="x1">
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" />
                      </HBox.margin>
+                     <tooltip>
+                        <Tooltip text="Занчение в точке x1" />
+                     </tooltip>
                   </TextField>
-                  <TextField maxWidth="1.7976931348623157E308" promptText="Значение x12" HBox.hgrow="ALWAYS" fx:id="x2">
+                  <TextField maxWidth="1.7976931348623157E308" promptText="Значение x2" HBox.hgrow="ALWAYS" fx:id="x2">
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" />
                      </HBox.margin>
+                     <tooltip>
+                        <Tooltip text="Значение в точке x2" />
+                     </tooltip>
                   </TextField>
                </children>
             </HBox>
@@ -95,11 +104,17 @@
                      <HBox.margin>
                         <Insets left="5.0" right="5.0" />
                      </HBox.margin>
+                     <tooltip>
+                        <Tooltip text="Значение параметра а" />
+                     </tooltip>
                   </TextField>
                   <TextField fx:id="startStep" maxWidth="1.7976931348623157E308" promptText="Начальный шаг" HBox.hgrow="ALWAYS">
                      <HBox.margin>
                         <Insets left="5.0" right="5.0" />
                      </HBox.margin>
+                     <tooltip>
+                        <Tooltip text="Начатьный шаг для алгоритмов" />
+                     </tooltip>
                   </TextField>
                </children>
             </HBox>
@@ -107,16 +122,25 @@
                <GridPane.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" />
                </GridPane.margin>
+               <tooltip>
+                  <Tooltip text="Количество шагов" />
+               </tooltip>
             </TextField>
             <TextField fx:id="printStep" promptText="Печать через" GridPane.columnIndex="1" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" />
                </GridPane.margin>
+               <tooltip>
+                  <Tooltip text="Через сколько шагов печатать результат" />
+               </tooltip>
             </TextField>
             <Button fx:id="step" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onStep" text="Шагнуть" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2">
                <GridPane.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" />
                </GridPane.margin>
+               <tooltip>
+                  <Tooltip text="Шагнуть указанным методом из заданной точки на указанное количество шагов с выводом результата в таблицу" />
+               </tooltip>
             </Button>
          </children>
       </GridPane>

@@ -1,4 +1,6 @@
-package methods;
+package utils;
+
+import utils.Point;
 
 public class Matrix2x2 {
     private final int n;
