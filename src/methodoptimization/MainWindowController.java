@@ -7,8 +7,10 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.MenuItem;
@@ -18,6 +20,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import methods.Function;
 import methods.NameMethods;
 import utils.Point;
@@ -70,12 +73,21 @@ public class MainWindowController implements Initializable {
     private TextField printStep;                        //Поле ввода значения количества шагов, через которые печатается результат
     @FXML
     private TextField startStep;                        //Поле ввода значения начального шага
-
+    
     /**
-     * @param stage the stage to set
+     *
+     * @param stage
      */
     public void setStage(Stage stage) {
         this.stage = stage;
+        stage.setOnCloseRequest((WindowEvent event) -> {
+            ButtonType type = DialogSingleton.showExitDialog();
+            if (ButtonType.YES == type) {
+                onSave();
+            } else if (ButtonType.CANCEL == type) {
+                event.consume();
+            } 
+        });
     }
     
     /**
@@ -84,7 +96,7 @@ public class MainWindowController implements Initializable {
      * то вызовится метод MainWindowController.onSaveAs()
      */
     @FXML
-    private void onSave() {
+    public void onSave() {
         if (null != file) {
             try (FileOutputStream fout = new FileOutputStream(file)) {
                 for (TableContent e : content) {
@@ -122,7 +134,7 @@ public class MainWindowController implements Initializable {
     @FXML
     private void onExit() {
         content.clear();
-        stage.close();  
+        stage.close();
     }
     
     /**
@@ -328,5 +340,16 @@ public class MainWindowController implements Initializable {
             result = false;
         }
         return result;
+    }
+
+    private static class Event implements EventHandler<WindowEvent> {
+
+        public Event() {
+        }
+
+        @Override
+        public void handle(WindowEvent event) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
     }
 }

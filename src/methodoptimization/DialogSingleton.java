@@ -1,8 +1,8 @@
 package methodoptimization;
 
-import java.io.IOException;
 import java.util.Optional;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextInputDialog;
 
 public class DialogSingleton {
@@ -12,6 +12,7 @@ public class DialogSingleton {
     static private Alert errorInput;
     static private Alert calculationIsOver;
     static private TextInputDialog epsilon;
+    static private Alert exit;
     
     synchronized public static void showAboutProgramDialog() {
         if (null == epsilon) {
@@ -70,12 +71,27 @@ public class DialogSingleton {
         epsilon.getEditor().setText(accuracy.toString());
         Optional<String> result = epsilon.showAndWait(); 
         try {
-            if (result.isPresent()){ 
-                return Integer.parseInt(result.get());        
-            }
+            if (result.isPresent())
+                accuracy =  Integer.parseInt(result.get());        
         } catch(NumberFormatException e) {
         }
         
         return accuracy;
     }
+    
+    synchronized public static ButtonType showExitDialog() {
+        if (null == exit) {
+            exit = new Alert(Alert.AlertType.NONE);
+            exit.setTitle("Выход из программы");
+            exit.setContentText("Сохранить изменения?");
+            exit.getButtonTypes().add(ButtonType.YES);
+            exit.getButtonTypes().add(ButtonType.NO);
+            exit.getButtonTypes().add(ButtonType.CANCEL);
+        }
+        
+        Optional<ButtonType> result = exit.showAndWait();
+        if (result.isPresent())
+            return result.get();
+        return ButtonType.CANCEL;
+    } 
 }
